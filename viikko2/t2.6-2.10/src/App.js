@@ -1,5 +1,6 @@
 import React from 'react';
 import Person from './components/Person'
+import FilterForm from './components/FilterForm';
 
 class App extends React.Component {
   constructor(props) {
@@ -13,7 +14,7 @@ class App extends React.Component {
       ],
       newName: '',
       newNumber: '',
-      filter: ''
+      filter: '',
     }
   }
 
@@ -40,28 +41,32 @@ class App extends React.Component {
         persons: persons,
         newName: '',
         newNumber: '',
-        filer: ''
       })
     } else {
       alert('Nimi löytyy jo')
     }
   }
 
-  filter = (event) => {
+  filterHandler = (event) => {
     event.preventDefault()
-    this.setState({filter: event.target.value})
+    this.setState({
+      filter: event.target.value,
+    })
+    console.log(this.state.filter)
+    
+  }
+
+  FilteredList(term) {
+    return function(x) {
+      return x.name.toLowerCase().includes(term.toLowerCase()) || !term;
+    }
   }
 
   render() {
     return (
       <div>
         <h2>Puhelinluettelo</h2>
-        <div>
-          rajaa näytettäviä
-          <input
-          onSubmit={this.filter}
-          />
-        </div>
+       <FilterForm filter={this.filterHandler} />
         <h2>Lisää uusi</h2>
         <form onSubmit={this.addEntry}>
           <div>
@@ -83,7 +88,8 @@ class App extends React.Component {
           </div>
         </form>
         <h2>Numerot</h2>
-          {this.state.persons.map(person => <Person key={person.name} person={person} />)}
+          {this.state.persons.filter(this.FilteredList(this.state.filter)).map(
+            person => <Person key={person.name} person={person} />)}
       </div>
 
     )
