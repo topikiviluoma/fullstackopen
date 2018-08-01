@@ -2,6 +2,8 @@ import React from 'react';
 import Person from './components/Person'
 import FilterForm from './components/FilterForm';
 import peopleService from './services/people/peopleService'
+import './index.css'
+import Notification from './components/Notification'
 
 class App extends React.Component {
   constructor(props) {
@@ -11,7 +13,8 @@ class App extends React.Component {
       ],
       newName: '',
       newNumber: '',
-      filter: ''
+      filter: '',
+      notification: null
     }
   }
 
@@ -39,7 +42,11 @@ class App extends React.Component {
             people: this.state.people.concat(response.data),
             newName: '',
             newNumber: '',
+            notification: `henkilö  '${entryObject.name}' lisättiin`
           })
+          setTimeout(() => {
+            this.setState({notification: null})
+          }, 5000);
         })
     } else {
       if (window.confirm('nimi löytyy jo, päivitetäänkö numero?')) {
@@ -48,8 +55,12 @@ class App extends React.Component {
           this.setState({
             newName: '',
             newNumber: '',
-            people: this.state.people.map(p => p.id !== person.id ? p : response.data)
+            people: this.state.people.map(p => p.id !== person.id ? p : response.data),
+            notification: `muutettiin '${person.name}' puhelinnumeroa`
           })
+          setTimeout(() => {
+            this.setState({notification: null})
+          }, 5000);
         })
       }
     }
@@ -63,9 +74,13 @@ class App extends React.Component {
           this.setState({
             people: this.state.people.filter(
               person => person.id !== id
-            )
+            ),
+            notification: 'henkilö poistettiin'
           })
         )
+        setTimeout(() => {
+          this.setState({notification: null})
+        }, 5000)  
       }
     }
   }
@@ -95,6 +110,7 @@ class App extends React.Component {
     return (
       <div>
         <h2>Puhelinluettelo</h2>
+        <Notification message={this.state.notification} />
         <FilterForm filter={this.filterHandler} />
         <h2>Lisää uusi</h2>
         <form onSubmit={this.addEntry}>
@@ -113,7 +129,7 @@ class App extends React.Component {
             />
           </div>
           <div>
-            <button type="submit">lisää</button>
+            <button class="add" type="submit">lisää</button>
           </div>
         </form>
         <h2>Numerot</h2>

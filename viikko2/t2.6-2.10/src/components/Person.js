@@ -7,7 +7,7 @@ const Person = ({ person, deletePerson }) => {
                 <tr>
                     <td>{person.name}</td>
                     <td>{person.number}</td>
-                    <td><button onClick={deletePerson}>Poista</button></td>
+                    <td><button class="delete" onClick={deletePerson}>Poista</button></td>
                 </tr>
             </tbody>
         </table>
