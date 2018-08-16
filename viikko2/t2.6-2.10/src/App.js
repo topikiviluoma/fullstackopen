@@ -129,7 +129,7 @@ class App extends React.Component {
             />
           </div>
           <div>
-            <button class="add" type="submit">lisää</button>
+            <button className="add" type="submit">lisää</button>
           </div>
         </form>
         <h2>Numerot</h2>
