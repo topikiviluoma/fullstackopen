@@ -1,5 +1,5 @@
 import React from 'react';
-import Person from './components/Person'
+import People from './components/People'
 import FilterForm from './components/FilterForm';
 import peopleService from './services/people/peopleService'
 import './index.css'
@@ -45,7 +45,7 @@ class App extends React.Component {
             notification: `henkilö  '${entryObject.name}' lisättiin`
           })
           setTimeout(() => {
-            this.setState({notification: null})
+            this.setState({ notification: null })
           }, 5000);
         })
     } else {
@@ -59,7 +59,7 @@ class App extends React.Component {
             notification: `muutettiin '${person.name}' puhelinnumeroa`
           })
           setTimeout(() => {
-            this.setState({notification: null})
+            this.setState({ notification: null })
           }, 5000);
         })
       }
@@ -79,8 +79,8 @@ class App extends React.Component {
           })
         )
         setTimeout(() => {
-          this.setState({notification: null})
-        }, 5000)  
+          this.setState({ notification: null })
+        }, 5000)
       }
     }
   }
@@ -133,11 +133,8 @@ class App extends React.Component {
           </div>
         </form>
         <h2>Numerot</h2>
-        {peopletoShow.map(
-          person =>
-            <Person key={person.id}
-              person={person}
-              deletePerson={this.deleteEntry(person.id)} />)}
+        <People  people={peopletoShow}
+          deletePerson={this.deleteEntry} />
       </div>
 
     )
