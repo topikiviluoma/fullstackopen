@@ -9,7 +9,7 @@ const People = ({ people, deletePerson }) => {
                         <tr key={person.id}>
                         <td>{person.name}</td>
                         <td>{person.number}</td>
-                        <td><button className="delete" onClick={deletePerson}>Poista</button></td>
+                        <td><button className="delete" onClick={deletePerson(person.id)}>Poista</button></td>
                         </tr>
                     )
                 }
