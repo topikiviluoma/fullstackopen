@@ -5,6 +5,7 @@ const bodyParser = require('body-parser')
 const cors = require('cors')
 const mongoose = require('mongoose')
 const blogsRouter = require('./controllers/blogs')
+const userRouter = require('./controllers/users')
 const config = require('./utils/config')
 
 
@@ -12,6 +13,7 @@ app.use(cors())
 app.use(bodyParser.json())
 app.use(express.static('build'))
 app.use('/api/blogs', blogsRouter)
+app.use('api/users', userRouter)
 console.log(config.mongoUrl)
 mongoose
   .connect(config.mongoUrl)
