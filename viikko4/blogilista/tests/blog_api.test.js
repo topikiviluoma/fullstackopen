@@ -62,6 +62,35 @@ describe('adding of new blog', async () => {
         
         expect(blogsAfter.length).toBe(blogsAtStart.length + 1)
     })
+
+    test('POST /api/blogs without likes defaults to 0', async () => {
+        const newBlog = {
+            title: "Test title",
+            author: "Peter Parker",
+            url: "www.google.com"
+        }
+        await api
+        .post('/api/blogs')
+        .send(newBlog)
+        .expect(201)
+        .expect('Content-Type', /application\/json/)
+
+        const allBlogs = await blogsInDb()
+        const addedBlog = allBlogs[allBlogs.length - 1]
+        expect(addedBlog.likes).toBe(0)
+    })
+
+    test('POST /api/blogs fails without title or author', async () => {
+        const newBlog = {
+            url: "www.google.com",
+            likes: 1
+        }
+
+        await api
+        .post('/api/blogs')
+        .send(newBlog)
+        .expect(401)
+    })
 })
 
 afterAll(() => {
