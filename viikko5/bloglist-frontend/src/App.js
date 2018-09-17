@@ -13,7 +13,7 @@ class App extends React.Component {
       user: null,
       username: '',
       password: '',
-      error: ''
+      error: null
     }
   }
 
@@ -28,6 +28,7 @@ class App extends React.Component {
       this.setState({user})
       blogService.setToken(user.token)
     }
+    console.log(loggedUserJSON)
   }
 
   login = async (event) => {
@@ -37,7 +38,10 @@ class App extends React.Component {
         username: this.state.username,
         password: this.state.password
       })
+      console.log('login user', user)
+
       window.localStorage.setItem('loggedUser', JSON.stringify(user))
+      console.log('localStorage', window.localStorage.getItem('loggedUser'))
       blogService.setToken(user.token)
       this.setState({ username: '', password: '', user: user })
     } catch (e) {
@@ -53,6 +57,11 @@ class App extends React.Component {
 
   handleLoginFieldChange = (event) => {
     this.setState({ [event.target.name]: event.target.value })
+  }
+
+  logout = (event) => {
+    event.preventDefault()
+    window.localStorage.removeItem('loggedUser')
   }
 
 
@@ -92,16 +101,16 @@ class App extends React.Component {
     if (this.state.user == null) {
       return (
         <div>
-          <Notification message={this.state.error} />
+          <Notification type='error' message={this.state.error} />
           {loginForm()}
         </div>
       )
     }
     return (
       <div>
-        <Notification message={this.state.error} />
+        <Notification type='error' message={this.state.error} />
         <div>
-          <p>{this.state.user.name} logged in <button onClick={window.localStorage.removeItem('loggedUser')}> logout </button></p>
+          <p>{this.state.user.name} logged in <button onClick={this.logout}> logout </button></p>
           <BlogForm />
           <h2>blogs</h2>
           {this.state.blogs.map(blog =>

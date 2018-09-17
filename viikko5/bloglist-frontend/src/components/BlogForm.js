@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import blogService from '../services/blogs'
+import Notification from '../components/Notification'
 
 class BlogForm extends Component {
     constructor(props) {
@@ -7,7 +8,8 @@ class BlogForm extends Component {
         this.state = {
             title: '',
             author: '',
-            url: ''
+            url: '',
+            message: null
         }
     }
 
@@ -23,30 +25,41 @@ class BlogForm extends Component {
             url: this.state.url
         })
         this.setState({
+            message: `a new blog '${this.state.title}' by ${this.state.author} added`
+        })
+        setTimeout(() => {
+            this.setState({ error: null })
+        }, 5000)
+        this.setState({
             title: '',
             author: '',
             url: ''
         })
+
         console.log(result)
     }
 
     render() {
         return (
-            <form onSubmit={this.handleFormSend}>
-                <div>
-                    title
+            <div>
+                <Notification type="notification" message={this.state.message} />
+
+                <form onSubmit={this.handleFormSend}>
+                    <div>
+                        title
                     <input type="text" onChange={this.handleFieldChange} name="title" />
-                </div>
-                <div>
-                    author
+                    </div>
+                    <div>
+                        author
                     <input type="text" onChange={this.handleFieldChange} name="author" />
-                </div>
-                <div>
-                    url
+                    </div>
+                    <div>
+                        url
                     <input type="text" onChange={this.handleFieldChange} name="url" />
-                </div>
-                <button type="submit">create</button>
-            </form>
+                    </div>
+                    <button type="submit">create</button>
+                </form>
+            </div>
         )
     }
 }
