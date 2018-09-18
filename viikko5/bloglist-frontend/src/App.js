@@ -4,6 +4,7 @@ import blogService from './services/blogs'
 import Notification from './components/Notification'
 import loginService from './services/login'
 import BlogForm from './components/BlogForm'
+import LoginForm from './components/LoginForm';
 
 class App extends React.Component {
   constructor(props) {
@@ -13,19 +14,24 @@ class App extends React.Component {
       user: null,
       username: '',
       password: '',
-      error: null
+      title: '',
+      author: '',
+      url: '',
+      message: null,
+      messageType: '',
+      loginVisible: false
     }
   }
 
-  componentDidMount() {
-    blogService.getAll().then(blogs =>
-      this.setState({ blogs })
-    )
+  componentDidMount = async () => {
+    const blogs = await blogService.getAll()
+    this.setState({ blogs })
+
 
     const loggedUserJSON = window.localStorage.getItem('loggedUser')
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
-      this.setState({user})
+      this.setState({ user })
       blogService.setToken(user.token)
     }
     console.log(loggedUserJSON)
@@ -47,7 +53,8 @@ class App extends React.Component {
     } catch (e) {
       console.log(e)
       this.setState({
-        error: 'wrong username of password',
+        message: 'wrong username of password',
+        messageType: 'error'
       })
       setTimeout(() => {
         this.setState({ error: null })
@@ -62,56 +69,91 @@ class App extends React.Component {
   logout = (event) => {
     event.preventDefault()
     window.localStorage.removeItem('loggedUser')
+    window.location.reload()
+  }
+
+  addBlog = async (event) => {
+    event.preventDefault()
+    if (this.state.title === '' || this.state.author === '' || this.state.url === '') {
+      this.setState({
+        message: 'Please fill all fields',
+        messageType: 'error'
+      })
+      setTimeout(() => {
+        this.setState({ message: null })
+      }, 5000)
+
+    } else {
+      
+      const result = await blogService.create({
+        title: this.state.title,
+        author: this.state.author,
+        url: this.state.url
+      })
+      this.setState({
+        message: `a new blog '${this.state.title}' by ${this.state.author} added`,
+        messageType: 'notification'
+      })
+      setTimeout(() => {
+        this.setState({ message: null })
+      }, 5000)
+      this.setState({
+        title: '',
+        author: '',
+        url: ''
+      })
+    }
+
   }
 
 
 
   render() {
+
     const loginForm = () => {
+      const hideWhenVisible = { display: this.state.loginVisible ? 'none' : '' }
+      const showWhenVisible = { display: this.state.loginVisible ? '' : 'none' }
+
       return (
         <div>
-          <h2>Log into application</h2>
-          <form onSubmit={this.login}>
-            <label htmlFor="username">
-              username:
-        <input
-                id="username"
-                type="text"
-                name="username"
-                value={this.state.username}
-                onChange={this.handleLoginFieldChange}
-              />
-            </label>
-            <label htmlFor="password">
-              password
-          <input
-                id="password"
-                type="password"
-                name="password"
-                value={this.state.password}
-                onChange={this.handleLoginFieldChange}
-              />
-            </label>
-            <button type="submit">kirjaudu</button>
-          </form>
+          <div style={hideWhenVisible}>
+            <button onClick={e => this.setState({ loginVisible: true })}>log in</button>
+          </div>
+          <div style={showWhenVisible}>
+            <LoginForm
+              username={this.state.username}
+              password={this.state.password}
+              handleChange={this.handleLoginFieldChange}
+              handleSubmit={this.login}
+            />
+            <button onClick={e => this.setState({ loginVisible: false })}>cancel</button>
+          </div>
         </div>
       )
-
     }
+
     if (this.state.user == null) {
       return (
         <div>
-          <Notification type='error' message={this.state.error} />
+          <Notification type={this.state.messageType} message={this.state.message} />
+
           {loginForm()}
+
         </div>
       )
     }
     return (
       <div>
-        <Notification type='error' message={this.state.error} />
+        <Notification type={this.state.messageType} message={this.state.message} />
+
         <div>
           <p>{this.state.user.name} logged in <button onClick={this.logout}> logout </button></p>
-          <BlogForm />
+          <BlogForm handleSubmit={this.addBlog}
+            handleChange={this.handleLoginFieldChange}
+            author={this.state.author}
+            title={this.state.title}
+            url={this.state.url}
+          />
           <h2>blogs</h2>
           {this.state.blogs.map(blog =>
             <Blog key={blog._id} blog={blog} />
