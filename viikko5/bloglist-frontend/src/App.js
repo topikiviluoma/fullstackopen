@@ -25,7 +25,12 @@ class App extends React.Component {
 
   componentDidMount = async () => {
     const blogs = await blogService.getAll()
-    this.setState({ blogs })
+
+    this.setState({
+      blogs: blogs.sort(function (a, b) {
+        return b.likes - a.likes
+      })
+    })
 
 
     const loggedUserJSON = window.localStorage.getItem('loggedUser')
@@ -84,7 +89,7 @@ class App extends React.Component {
       }, 5000)
 
     } else {
-      
+
       const result = await blogService.create({
         title: this.state.title,
         author: this.state.author,

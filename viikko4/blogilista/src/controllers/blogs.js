@@ -40,15 +40,21 @@ blogsRouter.post('/', async (request, response) => {
       body.likes = 0
     }
 
-    if (body.title === undefined || body.author === undefined) {
-      return response.status(401).json({ error: 'title of author missing' })
+    if (body.title === undefined) {
+      return response.status(401).json({ error: 'title missing' })
     }
+
+    if (body.author === undefined) {
+      return response.status(401).json({ error: 'author missing' })
+    }
+
+    console.log('body', body)
 
     const user = await User.findById(decodedToken.id)
 
     const blog = new Blog({
       title: body.title,
-      author: body.autor,
+      author: body.author,
       url: body.url,
       likes: body.likes,
       user: user
@@ -66,6 +72,22 @@ blogsRouter.post('/', async (request, response) => {
   }
 
 
+})
+
+blogsRouter.put('/:id', async (request, response) => {
+  try {
+    const blog = request.body
+    console.log('body', blog, 'id', request.params.id)
+    
+
+    const result = await Blog
+      .findByIdAndUpdate(request.params.id, blog, { new: true })
+
+    response.status(201).json(Blog.format(result))
+
+  } catch (e) {
+    console.log(e)
+  }
 })
 
 module.exports = blogsRouter
