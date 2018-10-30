@@ -20,6 +20,13 @@ class Blog extends Component {
     blogService.update(newObject)
   }
 
+  handleRemove = () => {
+    if (window.confirm('Delete blog?')) {
+      blogService.remove(this.props.blog)
+    }
+    
+  }
+
   render() {
     const blogStyle = {
       paddingTop: 10,
@@ -31,18 +38,20 @@ class Blog extends Component {
 
 
     return (
-      <div onClick={this.handleClick} style={blogStyle}>
+      <div onClick={this.handleClick} style={blogStyle} className="wrapper">
         {this.state.visible ?
-          <div>
+          <div className="content">
             {this.props.blog.title} {this.props.blog.author}
             <br></br>
             {this.props.blog.url}
             <br></br>
             {this.props.blog.likes} likes <button onClick={this.handleLike}>like</button>
             <br></br>
-        added by {this.props.blog.user.name}
+            added by {this.props.blog.user.name}
+            <br></br>
+            <button onClick={this.handleRemove}>delete</button>
           </div> :
-          <div>
+          <div className="content">
             {this.props.blog.title} {this.props.blog.author}
           </div>}
       </div>

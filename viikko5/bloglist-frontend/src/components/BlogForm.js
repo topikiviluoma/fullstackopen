@@ -1,6 +1,12 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 
 const BlogForm = ({ handleSubmit, handleChange}) => {
+
+    BlogForm.propTypes = {
+        handleChange: PropTypes.func.isRequired,
+        handleSubmit: PropTypes.func.isRequired
+    }
 
     return (
         <div>
